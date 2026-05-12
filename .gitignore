@@ -35,6 +35,10 @@
 *.i*86
 *.x86_64
 *.hex
+minios
+
+# Runtime state
+minios_state.dat
 
 # Debug files
 *.dSYM/
