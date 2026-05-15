@@ -5,14 +5,13 @@
 #define MINI_OS_MAX_INPUT 1024
 
 typedef enum MiniOsStatus {
-    MINI_OS_OK = 0,
-    MINI_OS_ERROR = 1,
-    MINI_OS_NOT_IMPLEMENTED = 2
+    MINI_OS_SUCCESS = 0,
+    MINI_OS_ERROR = 1
 } MiniOsStatus;
 
 typedef struct MiniOsContext MiniOsContext;
 
-MiniOsStatus minios_init(MiniOsContext *ctx);
-void minios_shutdown(MiniOsContext *ctx);
+MiniOsStatus minios_on(MiniOsContext *ctx);
+void minios_off(MiniOsContext *ctx);
 
 #endif

@@ -24,9 +24,9 @@ static int parse_input(char *input, char **argv)
     /* 공백 문자를 기준으로 사용자의 입력을 명령어와 인자로 나눈다. */
     char *token = strtok(input, " \t\r\n");
 
-    while (token != 0 && argc < MINI_OS_MAX_ARGS) {
+    while (token != NULL && argc < MINI_OS_MAX_ARGS) {
         argv[argc++] = token;
-        token = strtok(0, " \t\r\n");
+        token = strtok(NULL, " \t\r\n");
     }
 
     return argc;
@@ -41,7 +41,7 @@ MiniOsStatus shell_run(MiniOsContext *ctx)
     while (1) {
         printf("minios> ");
 
-        if (fgets(input, sizeof(input), stdin) == 0) {
+        if (fgets(input, sizeof(input), stdin) == NULL) {
             break;
         }
 
@@ -59,7 +59,7 @@ MiniOsStatus shell_run(MiniOsContext *ctx)
         shell_dispatch(ctx, argc, argv);
     }
 
-    return MINI_OS_OK;
+    return MINI_OS_SUCCESS;
 }
 
 MiniOsStatus shell_dispatch(MiniOsContext *ctx, int argc, char **argv)

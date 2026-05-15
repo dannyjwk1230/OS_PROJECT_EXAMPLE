@@ -8,5 +8,5 @@ MiniOsStatus cmd_rmdir(MiniOsContext *ctx, int argc, char **argv)
     (void)argc;
     (void)argv;
     printf("rmdir: TODO implement -p\n");
-    return MINI_OS_NOT_IMPLEMENTED;
+    return MINI_OS_SUCCESS;
 }

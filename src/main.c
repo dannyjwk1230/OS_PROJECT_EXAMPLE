@@ -8,7 +8,7 @@ int main(void)
     MiniOsContext ctx;
 
     /* Mini OS에서 사용할 루트 디렉터리와 현재 작업 위치를 준비한다. */
-    if (minios_init(&ctx) != MINI_OS_OK) {
+    if (minios_on(&ctx) != MINI_OS_SUCCESS) {
         fprintf(stderr, "failed to initialize Mini OS\n");
         return 1;
     }
@@ -23,6 +23,6 @@ int main(void)
     fs_save(&ctx, MINI_OS_STORAGE_FILE);
 
     /* 동적으로 만든 트리 구조를 정리하고 프로그램을 종료한다. */
-    minios_shutdown(&ctx);
+    minios_off(&ctx);
     return 0;
 }

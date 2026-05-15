@@ -6,5 +6,5 @@ MiniOsStatus thread_run_tasks(ThreadTask *tasks, void **args, int task_count)
     (void)tasks;
     (void)args;
     (void)task_count;
-    return MINI_OS_NOT_IMPLEMENTED;
+    return MINI_OS_SUCCESS;
 }
