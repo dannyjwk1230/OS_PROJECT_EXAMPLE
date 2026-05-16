@@ -48,16 +48,40 @@ MiniOsStatus fs_save(const MiniOsContext *ctx, const char *path)
 
 FsNode *fs_find_child(FsNode *directory, const char *name)
 {
-    /* TODO: directory의 자식 목록에서 name과 일치하는 노드를 찾는다. */
-    (void)directory;
-    (void)name;
+    if (directory == NULL || name == NULL) {
+        return NULL;
+    }
+
+    /* 첫 번째 자식부터 형제 링크를 따라가며 같은 이름의 노드를 찾는다. */
+    FsNode *child = directory->first_child;
+
+    for (; child != NULL; child = child->next_sibling) {
+        if (strcmp(child->name, name) == 0) {
+            return child;
+        }
+    }
+
     return NULL;
 }
 
 MiniOsStatus fs_add_child(FsNode *directory, FsNode *child)
 {
-    /* TODO: child를 directory의 자식 연결 리스트에 추가한다. */
-    (void)directory;
-    (void)child;
+    if (directory == NULL || child == NULL || directory->type != FS_DIRECTORY) {
+        return MINI_OS_ERROR;
+    }
+
+    /* 자식 목록이 비어 있으면 첫 자식으로 연결하고, 아니면 마지막 형제 뒤에 붙인다. */
+    FsNode *child_v = directory->first_child;
+    child->parent = directory;
+    child->next_sibling = NULL;
+
+    if (child_v == NULL) {
+        directory->first_child = child;
+        return MINI_OS_SUCCESS;
+    }
+    
+    for (; child_v->next_sibling != NULL; child_v = child_v->next_sibling) {}
+    child_v->next_sibling = child;
+
     return MINI_OS_SUCCESS;
 }

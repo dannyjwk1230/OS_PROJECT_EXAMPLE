@@ -32,6 +32,8 @@ static int parse_input(char *input, char **argv)
     return argc;
 }
 
+static MiniOsStatus shell_dispatch(MiniOsContext *ctx, int argc, char **argv);
+
 MiniOsStatus shell_run(MiniOsContext *ctx)
 {
     char input[MINI_OS_MAX_INPUT];
@@ -62,7 +64,7 @@ MiniOsStatus shell_run(MiniOsContext *ctx)
     return MINI_OS_SUCCESS;
 }
 
-MiniOsStatus shell_dispatch(MiniOsContext *ctx, int argc, char **argv)
+static MiniOsStatus shell_dispatch(MiniOsContext *ctx, int argc, char **argv)
 {
     size_t command_count = sizeof(COMMANDS) / sizeof(COMMANDS[0]);
 
@@ -74,6 +76,6 @@ MiniOsStatus shell_dispatch(MiniOsContext *ctx, int argc, char **argv)
     }
 
     /* 등록되지 않은 명령어는 오류로 처리한다. */
-    printf("unknown command: %s\n", argv[0]);
+    fprintf(stderr, "unknown command: %s\n", argv[0]);
     return MINI_OS_ERROR;
 }

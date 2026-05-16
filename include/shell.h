@@ -13,6 +13,5 @@ typedef struct CommandEntry {
 } CommandEntry;
 
 MiniOsStatus shell_run(MiniOsContext *ctx);
-MiniOsStatus shell_dispatch(MiniOsContext *ctx, int argc, char **argv);
 
 #endif
