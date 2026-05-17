@@ -17,7 +17,7 @@ static const CommandEntry COMMANDS[] = {
     {"rmdir", cmd_rmdir, "remove empty directories"},
 };
 
-static int parse_input(char *input, char **argv)
+int parse_input(char *input, char **argv)
 {
     int argc = 0;
 
