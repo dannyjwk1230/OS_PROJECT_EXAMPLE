@@ -13,6 +13,7 @@ typedef enum FsNodeType {
 typedef struct FsNode {
     char name[256];
     FsNodeType type;
+    int depth;
     int hidden;
     int permissions;
     char *content;

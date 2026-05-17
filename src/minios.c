@@ -5,10 +5,16 @@ MiniOsStatus minios_on(MiniOsContext *ctx)
     /* 가상 파일 시스템의 시작점인 루트 디렉터리를 만든다. */
     ctx->root = fs_create_node("/", FS_DIRECTORY);
 
+    if (ctx->root == NULL) {
+        return MINI_OS_ERROR;
+    }
+
+    ctx->root->depth = 0;
+
     /* 프로그램 시작 시 현재 위치는 루트 디렉터리로 설정한다. */
     ctx->current = ctx->root;
 
-    return ctx->root == NULL ? MINI_OS_ERROR : MINI_OS_SUCCESS;
+    return MINI_OS_SUCCESS;
 }
 
 void minios_off(MiniOsContext *ctx)

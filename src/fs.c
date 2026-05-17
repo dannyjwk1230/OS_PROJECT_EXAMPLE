@@ -48,15 +48,18 @@ MiniOsStatus fs_save(const MiniOsContext *ctx, const char *path)
 
 FsNode *fs_find_child(FsNode *directory, const char *name)
 {
-    if (directory == NULL || name == NULL) {
+    if (directory == NULL || name == NULL) 
+    {
         return NULL;
     }
 
     /* 첫 번째 자식부터 형제 링크를 따라가며 같은 이름의 노드를 찾는다. */
     FsNode *child = directory->first_child;
 
-    for (; child != NULL; child = child->next_sibling) {
-        if (strcmp(child->name, name) == 0) {
+    for (; child != NULL; child = child->next_sibling) 
+    {
+        if (strcmp(child->name, name) == 0) 
+        {
             return child;
         }
     }
@@ -66,7 +69,8 @@ FsNode *fs_find_child(FsNode *directory, const char *name)
 
 MiniOsStatus fs_add_child(FsNode *directory, FsNode *child)
 {
-    if (directory == NULL || child == NULL || directory->type != FS_DIRECTORY) {
+    if (directory == NULL || child == NULL || directory->type != FS_DIRECTORY) 
+    {
         return MINI_OS_ERROR;
     }
 
@@ -74,8 +78,10 @@ MiniOsStatus fs_add_child(FsNode *directory, FsNode *child)
     FsNode *child_v = directory->first_child;
     child->parent = directory;
     child->next_sibling = NULL;
+    child->depth = directory->depth + 1;
 
-    if (child_v == NULL) {
+    if (child_v == NULL) 
+    {
         directory->first_child = child;
         return MINI_OS_SUCCESS;
     }

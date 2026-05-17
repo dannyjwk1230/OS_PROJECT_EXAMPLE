@@ -69,7 +69,7 @@ static MiniOsStatus shell_dispatch(MiniOsContext *ctx, int argc, char **argv)
     size_t command_count = sizeof(COMMANDS) / sizeof(COMMANDS[0]);
 
     /* 명령어 테이블에서 입력한 명령어 이름과 일치하는 항목을 찾는다. */
-    for (size_t i = 0; i < command_count; ++i) {
+    for (size_t i = 0; i < command_count; i++) {
         if (strcmp(argv[0], COMMANDS[i].name) == 0) {
             return COMMANDS[i].handler(ctx, argc, argv);
         }
