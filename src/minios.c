@@ -1,14 +1,24 @@
+#include <string.h>
 #include "fs.h"
 
 MiniOsStatus minios_on(MiniOsContext *ctx)
 {
     /* 가상 파일 시스템의 시작점인 루트 디렉터리를 만든다. */
     ctx->root = fs_create_node("/", FS_DIRECTORY);
+    if (ctx->root == NULL) {
+        return MINI_OS_ERROR;
+    }
 
     /* 프로그램 시작 시 현재 위치는 루트 디렉터리로 설정한다. */
     ctx->current = ctx->root;
 
-    return ctx->root == NULL ? MINI_OS_ERROR : MINI_OS_SUCCESS;
+    /* Mini OS 실행 컨텍스트의 기본 사용자/그룹을 설정한다. */
+    strncpy(ctx->current_user, MINI_OS_DEFAULT_USER, MINI_OS_NAME_MAX - 1);
+    ctx->current_user[MINI_OS_NAME_MAX - 1] = '\0';
+    strncpy(ctx->current_group, MINI_OS_DEFAULT_GROUP, MINI_OS_NAME_MAX - 1);
+    ctx->current_group[MINI_OS_NAME_MAX - 1] = '\0';
+
+    return MINI_OS_SUCCESS;
 }
 
 void minios_off(MiniOsContext *ctx)
