@@ -2,7 +2,12 @@
 #define FS_H
 
 #include <stddef.h>
+#include <pthread.h>
 #include "minios.h"
+
+#define MINI_OS_NAME_MAX 32
+#define MINI_OS_DEFAULT_USER "os"
+#define MINI_OS_DEFAULT_GROUP "os"
 
 typedef enum FsNodeType {
     FS_DIRECTORY,
@@ -14,8 +19,9 @@ typedef struct FsNode {
     char name[256];
     FsNodeType type;
     int depth;
-    int hidden;
     int permissions;
+    char user[MINI_OS_NAME_MAX];
+    char group[MINI_OS_NAME_MAX];
     char *content;
     size_t content_size;
     struct FsNode *parent;
@@ -27,6 +33,9 @@ typedef struct FsNode {
 struct MiniOsContext {
     FsNode *root;
     FsNode *current;
+    char current_user[MINI_OS_NAME_MAX];
+    char current_group[MINI_OS_NAME_MAX];
+    pthread_mutex_t fs_lock;
 };
 
 FsNode *fs_create_node(const char *name, FsNodeType type);

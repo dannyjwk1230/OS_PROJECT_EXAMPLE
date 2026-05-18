@@ -14,9 +14,13 @@ FsNode *fs_create_node(const char *name, FsNodeType type)
 
     /* 노드 이름, 종류, 기본 권한을 초기화한다. */
     strncpy(node->name, name, sizeof(node->name) - 1);
-    node->hidden = (name[0] == '.');
+    node->name[sizeof(node->name) - 1] = '\0';
     node->type = type;
     node->permissions = 0755;
+    strncpy(node->user, MINI_OS_DEFAULT_USER, sizeof(node->user) - 1);
+    node->user[sizeof(node->user) - 1] = '\0';
+    strncpy(node->group, MINI_OS_DEFAULT_GROUP, sizeof(node->group) - 1);
+    node->group[sizeof(node->group) - 1] = '\0';
 
     return node;
 }

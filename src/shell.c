@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include "fs.h"
 #include "shell.h"
 #include "commands/basic.h"
 #include "commands/even.h"
@@ -41,7 +42,8 @@ MiniOsStatus shell_run(MiniOsContext *ctx)
 
     /* exit 또는 EOF가 들어올 때까지 Mini OS 프롬프트를 반복한다. */
     while (1) {
-        printf("minios> ");
+        /* 현재 사용자 정보를 포함한 프롬프트를 출력한다. */
+        printf("%s@minios> ", ctx->current_user);
 
         if (fgets(input, sizeof(input), stdin) == NULL) {
             break;
