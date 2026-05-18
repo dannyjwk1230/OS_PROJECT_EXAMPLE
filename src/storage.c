@@ -13,8 +13,7 @@ static char *escape_newlines(const char *text)
     for (const char *p = source; *p != '\0'; p++) {
         if (*p == '\\' || *p == '\n') {
             size += 2;
-        } 
-        else {
+        } else {
             size++;
         }
     }
