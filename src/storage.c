@@ -112,6 +112,10 @@ static void load_node(MiniOsContext *ctx, FILE *file)
 
         token = strtok(NULL, "|");
         if (token == NULL) continue;
+        time_t modified_time = (time_t)atoll(token);
+
+        token = strtok(NULL, "|");
+        if (token == NULL) continue;
         char name[256];
         strncpy(name, token, sizeof(name) - 1);
         name[sizeof(name) - 1] = '\0';
@@ -143,6 +147,7 @@ static void load_node(MiniOsContext *ctx, FILE *file)
         NodeTable[depth]->user[sizeof(NodeTable[depth]->user) - 1] = '\0';
         strncpy(NodeTable[depth]->group, group, sizeof(NodeTable[depth]->group) - 1);
         NodeTable[depth]->group[sizeof(NodeTable[depth]->user) - 1] = '\0';
+        NodeTable[depth]->modified_time = modified_time;
         
         if (type == FS_FILE)
         {
@@ -160,9 +165,10 @@ static void save_node(FsNode *node, FILE *file)
     {
         return;
     }
-    fprintf (file, "%d|%c|%o|%s|%s|%s", node->depth,
+    fprintf (file, "%d|%c|%o|%s|%s|%lld|%s", node->depth,
         node->type == FS_DIRECTORY ? 'D' : 'F', 
-        node->permissions, node->user, node->group, node->name);
+        node->permissions, node->user, node->group,
+        (long long)node->modified_time, node->name);
     if (node->type == FS_FILE)
     {
         /* fgets()가 노드 하나를 한 줄로 읽을 수 있도록 content의 줄바꿈을 escape한다. */

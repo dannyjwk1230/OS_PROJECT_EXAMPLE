@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include "fs.h"
 #include "storage.h"
 
@@ -17,6 +18,7 @@ FsNode *fs_create_node(const char *name, FsNodeType type)
     node->name[sizeof(node->name) - 1] = '\0';
     node->type = type;
     node->permissions = 0755;
+    node->modified_time = time(NULL);
     strncpy(node->user, MINI_OS_DEFAULT_USER, sizeof(node->user) - 1);
     node->user[sizeof(node->user) - 1] = '\0';
     strncpy(node->group, MINI_OS_DEFAULT_GROUP, sizeof(node->group) - 1);

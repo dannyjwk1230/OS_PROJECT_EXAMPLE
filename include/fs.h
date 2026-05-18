@@ -2,6 +2,7 @@
 #define FS_H
 
 #include <stddef.h>
+#include <time.h>
 #include <pthread.h>
 #include "minios.h"
 
@@ -22,6 +23,7 @@ typedef struct FsNode {
     int permissions;
     char user[MINI_OS_NAME_MAX];
     char group[MINI_OS_NAME_MAX];
+    time_t modified_time;
     char *content;
     size_t content_size;
     struct FsNode *parent;
