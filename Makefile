@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS := -Wall -Wextra -std=c11 -Iinclude
+CFLAGS := -Wall -Wextra -std=c11 -Iinclude -pthread
 TARGET := minios
 
 SRC := \
