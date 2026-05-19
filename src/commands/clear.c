@@ -3,10 +3,9 @@
 
 MiniOsStatus cmd_clear(MiniOsContext *ctx, int argc, char **argv)
 {
-    /* TODO: Mini OS 화면을 지우는 동작을 구현한다. */
     (void)ctx;
     (void)argc;
     (void)argv;
-    printf("clear: TODO implement terminal clearing\n");
+    printf("\033[2J\033[H");
     return MINI_OS_SUCCESS;
 }
