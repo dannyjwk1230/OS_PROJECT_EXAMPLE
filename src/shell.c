@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include "fs.h"
 #include "shell.h"
 #include "commands/basic.h"
 #include "commands/even.h"
@@ -17,20 +18,22 @@ static const CommandEntry COMMANDS[] = {
     {"rmdir", cmd_rmdir, "remove empty directories"},
 };
 
-static int parse_input(char *input, char **argv)
+int parse_input(char *input, char **argv)
 {
     int argc = 0;
 
     /* 공백 문자를 기준으로 사용자의 입력을 명령어와 인자로 나눈다. */
     char *token = strtok(input, " \t\r\n");
 
-    while (token != 0 && argc < MINI_OS_MAX_ARGS) {
+    while (token != NULL && argc < MINI_OS_MAX_ARGS) {
         argv[argc++] = token;
-        token = strtok(0, " \t\r\n");
+        token = strtok(NULL, " \t\r\n");
     }
 
     return argc;
 }
+
+static MiniOsStatus shell_dispatch(MiniOsContext *ctx, int argc, char **argv);
 
 MiniOsStatus shell_run(MiniOsContext *ctx)
 {
@@ -39,9 +42,10 @@ MiniOsStatus shell_run(MiniOsContext *ctx)
 
     /* exit 또는 EOF가 들어올 때까지 Mini OS 프롬프트를 반복한다. */
     while (1) {
-        printf("minios> ");
+        /* 현재 사용자 정보를 포함한 프롬프트를 출력한다. */
+        printf("%s@minios> ", ctx->current_user);
 
-        if (fgets(input, sizeof(input), stdin) == 0) {
+        if (fgets(input, sizeof(input), stdin) == NULL) {
             break;
         }
 
@@ -59,21 +63,21 @@ MiniOsStatus shell_run(MiniOsContext *ctx)
         shell_dispatch(ctx, argc, argv);
     }
 
-    return MINI_OS_OK;
+    return MINI_OS_SUCCESS;
 }
 
-MiniOsStatus shell_dispatch(MiniOsContext *ctx, int argc, char **argv)
+static MiniOsStatus shell_dispatch(MiniOsContext *ctx, int argc, char **argv)
 {
     size_t command_count = sizeof(COMMANDS) / sizeof(COMMANDS[0]);
 
     /* 명령어 테이블에서 입력한 명령어 이름과 일치하는 항목을 찾는다. */
-    for (size_t i = 0; i < command_count; ++i) {
+    for (size_t i = 0; i < command_count; i++) {
         if (strcmp(argv[0], COMMANDS[i].name) == 0) {
             return COMMANDS[i].handler(ctx, argc, argv);
         }
     }
 
     /* 등록되지 않은 명령어는 오류로 처리한다. */
-    printf("unknown command: %s\n", argv[0]);
+    fprintf(stderr, "unknown command: %s\n", argv[0]);
     return MINI_OS_ERROR;
 }

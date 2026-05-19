@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include "fs.h"
 #include "storage.h"
 
@@ -8,21 +9,27 @@ FsNode *fs_create_node(const char *name, FsNodeType type)
     /* 파일 또는 디렉터리를 표현할 트리 노드를 하나 생성한다. */
     FsNode *node = (FsNode *)calloc(1, sizeof(FsNode));
 
-    if (node == 0) {
-        return 0;
+    if (node == NULL) {
+        return NULL;
     }
 
     /* 노드 이름, 종류, 기본 권한을 초기화한다. */
     strncpy(node->name, name, sizeof(node->name) - 1);
+    node->name[sizeof(node->name) - 1] = '\0';
     node->type = type;
     node->permissions = 0755;
+    node->modified_time = time(NULL);
+    strncpy(node->user, MINI_OS_DEFAULT_USER, sizeof(node->user) - 1);
+    node->user[sizeof(node->user) - 1] = '\0';
+    strncpy(node->group, MINI_OS_DEFAULT_GROUP, sizeof(node->group) - 1);
+    node->group[sizeof(node->group) - 1] = '\0';
 
     return node;
 }
 
 void fs_destroy_tree(FsNode *node)
 {
-    if (node == 0) {
+    if (node == NULL) {
         return;
     }
 
@@ -47,16 +54,46 @@ MiniOsStatus fs_save(const MiniOsContext *ctx, const char *path)
 
 FsNode *fs_find_child(FsNode *directory, const char *name)
 {
-    /* TODO: directory의 자식 목록에서 name과 일치하는 노드를 찾는다. */
-    (void)directory;
-    (void)name;
-    return 0;
+    if (directory == NULL || name == NULL) 
+    {
+        return NULL;
+    }
+
+    /* 첫 번째 자식부터 형제 링크를 따라가며 같은 이름의 노드를 찾는다. */
+    FsNode *child = directory->first_child;
+
+    for (; child != NULL; child = child->next_sibling) 
+    {
+        if (strcmp(child->name, name) == 0) 
+        {
+            return child;
+        }
+    }
+
+    return NULL;
 }
 
 MiniOsStatus fs_add_child(FsNode *directory, FsNode *child)
 {
-    /* TODO: child를 directory의 자식 연결 리스트에 추가한다. */
-    (void)directory;
-    (void)child;
-    return MINI_OS_NOT_IMPLEMENTED;
+    if (directory == NULL || child == NULL || directory->type != FS_DIRECTORY) 
+    {
+        return MINI_OS_ERROR;
+    }
+
+    /* 자식 목록이 비어 있으면 첫 자식으로 연결하고, 아니면 마지막 형제 뒤에 붙인다. */
+    FsNode *child_v = directory->first_child;
+    child->parent = directory;
+    child->next_sibling = NULL;
+    child->depth = directory->depth + 1;
+
+    if (child_v == NULL) 
+    {
+        directory->first_child = child;
+        return MINI_OS_SUCCESS;
+    }
+    
+    for (; child_v->next_sibling != NULL; child_v = child_v->next_sibling) {}
+    child_v->next_sibling = child;
+
+    return MINI_OS_SUCCESS;
 }

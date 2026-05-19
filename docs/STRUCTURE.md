@@ -1,5 +1,61 @@
 # Project Structure
 
+## Header / Source Layers
+
+```text
+src/main.c
+|-- include/fs.h
+|   `-- include/minios.h
+|-- include/shell.h
+|   `-- include/minios.h
+`-- include/storage.h
+    `-- include/fs.h
+        `-- include/minios.h
+
+src/minios.c
+`-- include/fs.h
+    `-- include/minios.h
+
+src/fs.c
+|-- include/fs.h
+|   `-- include/minios.h
+`-- include/storage.h
+    `-- include/fs.h
+        `-- include/minios.h
+
+src/storage.c
+`-- include/storage.h
+    `-- include/fs.h
+        `-- include/minios.h
+
+src/shell.c
+|-- include/shell.h
+|   `-- include/minios.h
+|-- include/commands/basic.h
+|   `-- include/minios.h
+`-- include/commands/even.h
+    `-- include/minios.h
+
+src/threading.c
+`-- include/threading.h
+    `-- include/minios.h
+
+src/commands/ls.c
+src/commands/cd.c
+src/commands/mkdir.c
+src/commands/cat.c
+src/commands/pwd.c
+`-- include/commands/basic.h
+    `-- include/minios.h
+
+src/commands/chmod.c
+src/commands/clear.c
+src/commands/cp.c
+src/commands/rmdir.c
+`-- include/commands/even.h
+    `-- include/minios.h
+```
+
 이 문서는 구현을 시작할 때 어느 파일을 수정하면 되는지 빠르게 찾기 위한 안내입니다.
 
 ## Core
