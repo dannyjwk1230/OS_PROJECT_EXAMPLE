@@ -17,6 +17,7 @@ SRC := \
 	src/commands/chmod.c \
 	src/commands/clear.c \
 	src/commands/cp.c \
+	src/commands/touch.c \
 	src/commands/rmdir.c
 
 OBJ := $(SRC:.c=.o)
