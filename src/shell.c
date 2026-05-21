@@ -16,6 +16,7 @@ static const CommandEntry COMMANDS[] = {
     {"clear", cmd_clear, "clear terminal"},
     {"cp", cmd_cp, "copy files or directories"},
     {"rmdir", cmd_rmdir, "remove empty directories"},
+    {"echo", cmd_echo, "print arguments to the standard output"},
 };
 
 int parse_input(char *input, char **argv)
