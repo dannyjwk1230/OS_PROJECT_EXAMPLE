@@ -17,6 +17,7 @@ static const CommandEntry COMMANDS[] = {
     {"cp", cmd_cp, "copy files or directories"},
     {"rmdir", cmd_rmdir, "remove empty directories"},
     {"echo", cmd_echo, "print arguments to the standard output"},
+    {"search", cmd_search, "search files and directories by name"},
 };
 
 int parse_input(char *input, char **argv)
