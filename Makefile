@@ -18,7 +18,8 @@ SRC := \
 	src/commands/clear.c \
 	src/commands/cp.c \
 	src/commands/rmdir.c \
-	src/commands/echo.c
+	src/commands/echo.c \
+	src/commands/search.c
 
 OBJ := $(SRC:.c=.o)
 
