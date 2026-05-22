@@ -37,6 +37,33 @@ int parse_input(char *input, char **argv)
 
 static MiniOsStatus shell_dispatch(MiniOsContext *ctx, int argc, char **argv);
 
+static void shell_print_current_path(const MiniOsContext *ctx)
+{
+    const FsNode *stack[128];
+    const FsNode *current;
+    int count = 0;
+
+    /* root 디렉토리 생성 오류 */
+    if (ctx == NULL || ctx->current == NULL) {
+        fputs("/", stdout);
+        return;
+    }
+
+    for (current = ctx->current; current != NULL && count < 128; current = current->parent) {
+        stack[count++] = current;
+    }
+
+    if (count <= 1) {
+        fputs("/", stdout);
+        return;
+    }
+
+    /* root 디렉토리는 제외하고 출력한다 */
+    for (int i = count - 2; i >= 0; i--) {
+        printf("/%s", stack[i]->name);
+    }
+}
+
 MiniOsStatus shell_run(MiniOsContext *ctx)
 {
     char input[MINI_OS_MAX_INPUT];
@@ -45,7 +72,9 @@ MiniOsStatus shell_run(MiniOsContext *ctx)
     /* exit 또는 EOF가 들어올 때까지 Mini OS 프롬프트를 반복한다. */
     while (1) {
         /* 현재 사용자 정보를 포함한 프롬프트를 출력한다. */
-        printf("%s@minios> ", ctx->current_user);
+        printf("%s@minios:", ctx->current_user);
+        shell_print_current_path(ctx);
+        printf("> ");
 
         if (fgets(input, sizeof(input), stdin) == NULL) {
             break;
