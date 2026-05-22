@@ -13,7 +13,6 @@ static FsNode *resolve_path(MiniOsContext *ctx, const char *path)
 {
     char buf[1024];
     char *tok;
-    char *save = NULL;
     FsNode *cur;
     size_t len;
 
@@ -30,21 +29,24 @@ static FsNode *resolve_path(MiniOsContext *ctx, const char *path)
     }
 
     cur = (buf[0] == '/') ? ctx->root : ctx->current;
-    tok = strtok_r(buf, "/", &save);
+    tok = strtok(buf, "/");
 
     while (tok != NULL) {
         if (strcmp(tok, ".") == 0) {
-            tok = strtok_r(NULL, "/", &save);
+            tok = strtok(NULL, "/");
             continue;
         }
+
         if (strcmp(tok, "..") == 0) {
             if (cur->parent != NULL) cur = cur->parent;
-            tok = strtok_r(NULL, "/", &save);
+            tok = strtok(NULL, "/");
             continue;
         }
+
         cur = fs_find_child(cur, tok);
         if (cur == NULL) return NULL;
-        tok = strtok_r(NULL, "/", &save);
+
+        tok = strtok(NULL, "/");
     }
 
     return cur;
@@ -73,6 +75,7 @@ static MiniOsStatus detach_from_parent(FsNode *node)
     c->next_sibling = node->next_sibling;
     node->next_sibling = NULL;
     node->parent = NULL;
+
     return MINI_OS_SUCCESS;
 }
 
@@ -93,16 +96,19 @@ MiniOsStatus cmd_rmdir(MiniOsContext *ctx, int argc, char **argv)
 
     if (strcmp(argv[1], "-p") == 0) {
         pflag = 1;
+
         if (argc != 3) {
             printf("rmdir: usage: rmdir -p <dir>\n");
             return MINI_OS_ERROR;
         }
+
         path = argv[2];
     } else {
         if (argc != 2) {
             printf("rmdir: usage: rmdir <dir>\n");
             return MINI_OS_ERROR;
         }
+
         path = argv[1];
     }
 
@@ -144,6 +150,7 @@ MiniOsStatus cmd_rmdir(MiniOsContext *ctx, int argc, char **argv)
             pthread_mutex_unlock(&ctx->fs_lock);
             return MINI_OS_ERROR;
         }
+
         fs_destroy_tree(target);
         pthread_mutex_unlock(&ctx->fs_lock);
         return MINI_OS_SUCCESS;
@@ -155,10 +162,12 @@ MiniOsStatus cmd_rmdir(MiniOsContext *ctx, int argc, char **argv)
         if (!is_empty_dir(cur)) break;
 
         up = cur->parent;
+
         if (detach_from_parent(cur) != MINI_OS_SUCCESS) {
             pthread_mutex_unlock(&ctx->fs_lock);
             return MINI_OS_ERROR;
         }
+
         fs_destroy_tree(cur);
         cur = up;
     }

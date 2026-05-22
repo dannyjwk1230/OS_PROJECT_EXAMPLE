@@ -9,7 +9,6 @@ static FsNode *resolve_path(MiniOsContext *ctx, const char *path)
 {
     char buf[1024];
     char *tok;
-    char *save = NULL;
     FsNode *cur;
     size_t len;
 
@@ -26,21 +25,24 @@ static FsNode *resolve_path(MiniOsContext *ctx, const char *path)
     }
 
     cur = (buf[0] == '/') ? ctx->root : ctx->current;
-    tok = strtok_r(buf, "/", &save);
+    tok = strtok(buf, "/");
 
     while (tok != NULL) {
         if (strcmp(tok, ".") == 0) {
-            tok = strtok_r(NULL, "/", &save);
+            tok = strtok(NULL, "/");
             continue;
         }
+
         if (strcmp(tok, "..") == 0) {
             if (cur->parent != NULL) cur = cur->parent;
-            tok = strtok_r(NULL, "/", &save);
+            tok = strtok(NULL, "/");
             continue;
         }
+
         cur = fs_find_child(cur, tok);
         if (cur == NULL) return NULL;
-        tok = strtok_r(NULL, "/", &save);
+
+        tok = strtok(NULL, "/");
     }
 
     return cur;
@@ -52,6 +54,7 @@ static MiniOsStatus detach_from_parent(FsNode *node)
     FsNode *c;
 
     if (node == NULL || node->parent == NULL) return MINI_OS_ERROR;
+
     p = node->parent;
     c = p->first_child;
 
@@ -68,6 +71,7 @@ static MiniOsStatus detach_from_parent(FsNode *node)
     c->next_sibling = node->next_sibling;
     node->next_sibling = NULL;
     node->parent = NULL;
+
     return MINI_OS_SUCCESS;
 }
 
@@ -79,7 +83,10 @@ static MiniOsStatus resolve_parent_and_name(
     FsNode *parent;
     size_t len;
 
-    if (ctx == NULL || path == NULL || parent_out == NULL || name_out == NULL || cap == 0) return MINI_OS_ERROR;
+    if (ctx == NULL || path == NULL || parent_out == NULL || name_out == NULL || cap == 0) {
+        return MINI_OS_ERROR;
+    }
+
     if (strlen(path) >= sizeof(buf)) return MINI_OS_ERROR;
 
     strncpy(buf, path, sizeof(buf) - 1);
@@ -110,7 +117,10 @@ static MiniOsStatus resolve_parent_and_name(
         name_out[cap - 1] = '\0';
     }
 
-    if (parent == NULL || parent->type != FS_DIRECTORY || name_out[0] == '\0') return MINI_OS_ERROR;
+    if (parent == NULL || parent->type != FS_DIRECTORY || name_out[0] == '\0') {
+        return MINI_OS_ERROR;
+    }
+
     *parent_out = parent;
     return MINI_OS_SUCCESS;
 }
@@ -125,21 +135,25 @@ static MiniOsStatus copy_file_content(FsNode *dst, const FsNode *src)
         return MINI_OS_SUCCESS;
     }
 
-    dst->content = (char *)malloc(src->content_size);
+    dst->content = (char *)malloc(src->content_size + 1);
     if (dst->content == NULL) return MINI_OS_ERROR;
 
     memcpy(dst->content, src->content, src->content_size);
+    dst->content[src->content_size] = '\0';
     dst->content_size = src->content_size;
+
     return MINI_OS_SUCCESS;
 }
 
 static int is_ancestor(FsNode *a, FsNode *b)
 {
     FsNode *cur = b;
+
     while (cur != NULL) {
         if (cur == a) return 1;
         cur = cur->parent;
     }
+
     return 0;
 }
 
